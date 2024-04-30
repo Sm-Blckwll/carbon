@@ -1,10 +1,10 @@
-$(document).ready(function() {
-    $("#startButton").click(function() {
+$(document).ready(function () {
+    $("#startButton").click(function () {
         $("#loading").delay(100).fadeOut("fast");
     });
 });
 
-var map = L.map('mapid',{minZoom: 10}).setView([51.008, -4.467], 12);
+var map = L.map('mapid', { minZoom: 10 }).setView([51.008, -4.467], 12);
 
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     maxZoom: 19,
@@ -34,13 +34,17 @@ map.addControl(drawControl);
 
 // Carbon sequestration rates in tons per hectare per year
 var sequestrationRates = {
-    'forest': 2.5,
-    'grassland': 1.0,
-    'wetland': 2.0,
-    'cropland': 0.5,
+    'woodland': 2.0,
+    'plantation': 2.5,
+    'grassland': 0.4,
+    'silage': 1.0,
+    'wetland': 1.5,
+    'salt marsh': 2.5,
+    'annual crops': 0.2,
+    'perennial crops': 0.8,
     'urban': 0.0,
-    'peatland': 3.0
-    // Add more as needed
+    'peatland': 3.0,
+    'scrub': 0.3,
 };
 
 var savedPolygons = []; // Array to store saved polygons
@@ -77,7 +81,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
     // Update the carbon values in the sidebar
     document.getElementById('currentCarbonValue').textContent = 'Current: ' + currentSequestration.toFixed(2) + ' t';
     document.getElementById('newCarbonValue').textContent = 'New: ' + newSequestration.toFixed(2) + ' t';
-    document.getElementById('carbonDifference').textContent =  sequestrationDifference.toFixed(2) + ' t';
+    document.getElementById('carbonDifference').textContent = sequestrationDifference.toFixed(2) + ' t';
 
     drawnItems.addLayer(layer);
 });
@@ -85,7 +89,7 @@ map.on(L.Draw.Event.CREATED, function (event) {
 
 map.on(L.Draw.Event.EDITED, function (event) {
     var layers = event.layers;
-    layers.eachLayer(function(layer) {
+    layers.eachLayer(function (layer) {
         // Get the selected habitat types
         var currentHabitatType = document.getElementById('currentHabitatType').value;
         var newHabitatType = document.getElementById('newHabitatType').value;
@@ -115,7 +119,7 @@ map.on(L.Draw.Event.EDITED, function (event) {
         // Update the carbon values in the sidebar
         document.getElementById('currentCarbonValue').textContent = 'Current: ' + currentSequestration.toFixed(2) + ' t';
         document.getElementById('newCarbonValue').textContent = 'New: ' + newSequestration.toFixed(2) + ' t';
-        document.getElementById('carbonDifference').textContent =  sequestrationDifference.toFixed(2) + ' t';
+        document.getElementById('carbonDifference').textContent = sequestrationDifference.toFixed(2) + ' t';
     });
 });
 
@@ -154,10 +158,10 @@ function updateSequestration() {
             differenceElement.textContent = '+' + sequestrationDifference.toFixed(2);
             differenceElement.style.color = 'green';
         } else if (sequestrationDifference < 0) {
-            differenceElement.textContent =  sequestrationDifference.toFixed(2); // The "-" sign is already included in the number
+            differenceElement.textContent = sequestrationDifference.toFixed(2); // The "-" sign is already included in the number
             differenceElement.style.color = 'red';
         } else {
-            differenceElement.textContent =  sequestrationDifference.toFixed(2);
+            differenceElement.textContent = sequestrationDifference.toFixed(2);
             differenceElement.style.color = 'black';
         }
     });
@@ -186,7 +190,7 @@ document.getElementById('saveButton').addEventListener('click', function () {
             return sum + savedPolygon.sequestrationDifference;
         }, 0);
 
-        document.getElementById('totalCarbonValue').textContent =  totalCarbon.toFixed(2) + ' tons of CO2e per year';
+        document.getElementById('totalCarbonValue').textContent = totalCarbon.toFixed(2) + ' tons of CO2e per year';
 
         // Change the color of the saved polygon based on its new habitat type
         var habitatColor = getColor(savedPolygon.newHabitatType);
@@ -217,19 +221,55 @@ document.getElementById('saveButton').addEventListener('click', function () {
 // Function to get color based on habitat type
 function getColor(habitatType) {
     switch (habitatType) {
-        case 'urban':
-            return 'red';
+        case 'woodland':
+            return '#008531';
+        case 'plantation':
+            return '#008556';
         case 'grassland':
-            return 'lightgreen';
-        case 'forest':
-            return 'darkgreen';
-        case 'cropland':
-            return 'yellow';
+            return '#7a9e16';
+        case 'silage':
+            return '#72ba6c';
         case 'wetland':
-            return 'blue';
+            return '#6cba9c';
+        case 'salt marsh':
+            return '#6cbab5';
+        case 'annual crops':
+            return '#baac6c';
+        case 'perennial crops':
+            return '#b0ba6c';
+        case 'urban':
+            return '#dbd5c5';
         case 'peatland':
-            return 'brown';
+            return '#ba936c';
+        case 'scrub':
+            return '#798767';
         default:
-            return 'gray'; // Default color for unknown types
+            return '#ededed'; // Default color for unknown types
     }
 }
+
+$(document).ready(function() {
+    const container = $('.container');
+    const characters = 'x-+=/%↜↗↘↝¼↉⅛⅚⅕∑√∛∞⑽⑶';
+
+    function createCharacter() {
+        const character = $('<div class="character"></div>');
+        character.text(characters.charAt(Math.floor(Math.random() * characters.length)));
+        character.css('left', Math.random() * 100 + 'vw');
+        container.append(character);
+
+        setTimeout(() => {
+            character.remove();
+        }, 5000); // Adjust this value to control how long characters stay on the screen
+
+        const animationTime = 2000 + Math.random() * 3000; // Adjust animation time
+        character.animate({
+            top: container.height() + 'px'
+        }, animationTime, 'linear', function() {
+            $(this).remove();
+        });
+    }
+
+    setInterval(createCharacter, 500); // Adjust this value to control how frequently new characters are created
+});
+

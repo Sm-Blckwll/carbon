@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habitat Map</title>
+    <title>Carbon Calculator</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -14,10 +14,16 @@
     <script src="https://unpkg.com/@turf/turf/turf.min.js"></script>
     <script src="https://unpkg.com/esri-leaflet-vector@4.0.0/dist/esri-leaflet-vector.js"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div id="loading">
+        <div class="container">
+            <div id="falling-characters"></div>
+        </div>
         <div class="load-container">
             <h1>A simple carbon calculator</h1>
             <p>Work out your projected carbon difference by landuse and plan your next carbon sink project.</p>
@@ -37,31 +43,39 @@
         </div>
         <div class="difference">
             <p id="carbonDifference">+0</p>
-            
+
         </div>
 
         <div class="selectors">
             <select id="currentHabitatType">
                 <option disabled selected>Current</option>
-                <option value="urban">Urban</option>
+                <option value="woodland">Woodland</option>
+                <option value="plantation">Plantation</option>
                 <option value="grassland">Grassland</option>
+                <option value="silage">Silage</option>
                 <option value="wetland">Wetland</option>
-                <option value="cropland">Cropland</option>
-                <option value="forest">Forest</option>
+                <option value="salt marsh">Salt marsh</option>
+                <option value="annual crops">Annual crops</option>
+                <option value="perennial crops">Perennial crops</option>
+                <option value="urban">Urban</option>
                 <option value="peatland">Peatland</option>
-                <!-- Add more options as needed -->
+                <option value="scrub">Scrub</option>
             </select>
 
 
             <select id="newHabitatType">
                 <option disabled selected>New</option>
-                <option value="urban">Urban</option>
+                <option value="woodland">Woodland</option>
+                <option value="plantation">Plantation</option>
                 <option value="grassland">Grassland</option>
+                <option value="silage">Silage</option>
                 <option value="wetland">Wetland</option>
-                <option value="cropland">Cropland</option>
-                <option value="forest">Forest</option>
+                <option value="salt marsh">Salt marsh</option>
+                <option value="annual crops">Annual crops</option>
+                <option value="perennial crops">Perennial crops</option>
+                <option value="urban">Urban</option>
                 <option value="peatland">Peatland</option>
-                <!-- Add more options as needed -->
+                <option value="scrub">Scrub</option>
             </select>
         </div>
 
@@ -70,7 +84,7 @@
         <button id="saveButton">Save</button>
 
         <!-- Add Total Carbon display -->
-        <h2 style="padding-top: 1rem;">Total:</h2>
+        <h2 style="padding-top: 1rem;">Total change:</h2>
         <p id="totalCarbonValue">0 tons</p>
     </div>
 </body>
